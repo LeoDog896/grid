@@ -29,18 +29,21 @@
 				const xPos = i * boxSize + (x % boxSize);
 				const yPos = j * boxSize + (y % boxSize);
 
-				if (map[JSON.stringify([xCoord, yCoord])]) {
+                const activeCell = map[JSON.stringify([xCoord, yCoord])];
+
+				if (activeCell) {
 					context.fillStyle = 'black';
 					context.fillRect(xPos, yPos, boxSize, boxSize);
 				} else {
 					context.fillStyle = 'white';
+                    context.strokeStyle = 'gray';
 					context.strokeRect(xPos, yPos, boxSize, boxSize);
 				}
 
 				// draw the coords
                 console.log(boxSize)
                 if (boxSize > 35) {
-                    context.fillStyle = map[JSON.stringify([xCoord, yCoord])] ? 'white' : 'black';
+                    context.fillStyle = activeCell ? 'white' : 'gray';
                     context.font = `${boxSize / 2}px`;
                     context.fillText(`${xCoord}, ${yCoord}`, xPos + 5, yPos + 15);
                 }
