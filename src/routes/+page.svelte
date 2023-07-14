@@ -38,8 +38,12 @@
 				}
 
 				// draw the coords
-				context.fillStyle = map[JSON.stringify([xCoord, yCoord])] ? 'white' : 'black';
-				context.fillText(`${xCoord}, ${yCoord}`, xPos + 5, yPos + 15);
+                console.log(boxSize)
+                if (boxSize > 35) {
+                    context.fillStyle = map[JSON.stringify([xCoord, yCoord])] ? 'white' : 'black';
+                    context.font = `${boxSize / 2}px`;
+                    context.fillText(`${xCoord}, ${yCoord}`, xPos + 5, yPos + 15);
+                }
 			}
 		}
 	};
@@ -48,6 +52,10 @@
 <svelte:window
 	bind:innerWidth={width}
 	bind:innerHeight={height}
+    on:wheel={({ deltaY }) => {
+        boxSize += deltaY / 100;
+        boxSize = Math.min(Math.max(30, boxSize), 100);
+    }} 
 	on:mousedown={() => {
 		mouseDown = true;
 	}}
