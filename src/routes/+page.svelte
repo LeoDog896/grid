@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Cell, cellToColor, flipCell, cycleColor } from '$lib/cell';
 	import { Canvas, Layer, type Render } from 'svelte-canvas';
 
 	let x = 0;
@@ -14,7 +15,7 @@
 
 	type Vector = [x: number, y: number];
 
-	const map: Record<string, boolean> = {};
+	let map: Map<string, Cell> = new Map();
 
 	function screenToMap(xCursor: number, yCursor: number): Vector {
 		return [Math.floor((xCursor - x) / boxSize), Math.floor((yCursor - y) / boxSize)];
@@ -29,21 +30,21 @@
 				const xPos = i * boxSize + (x % boxSize);
 				const yPos = j * boxSize + (y % boxSize);
 
-                const activeCell = map[JSON.stringify([xCoord, yCoord])];
+                const activeCell = map.get(JSON.stringify([xCoord, yCoord])) ?? Cell.Disabled;
+				const color = cellToColor(activeCell);
 
 				if (activeCell) {
-					context.fillStyle = 'black';
+					context.fillStyle = color;
 					context.fillRect(xPos, yPos, boxSize, boxSize);
 				} else {
-					context.fillStyle = 'white';
+					context.fillStyle = color;
                     context.strokeStyle = 'gray';
 					context.strokeRect(xPos, yPos, boxSize, boxSize);
 				}
 
 				// draw the coords
-                console.log(boxSize)
                 if (boxSize > 35) {
-                    context.fillStyle = activeCell ? 'white' : 'gray';
+                    context.fillStyle = activeCell == Cell.Disabled ? 'gray' : 'white';
                     context.font = `${boxSize / 2}px`;
                     context.fillText(`${xCoord}, ${yCoord}`, xPos + 5, yPos + 15);
                 }
@@ -69,17 +70,22 @@
 			y += movementY;
 		}
 	}}
-	on:mouseup={({ offsetX, offsetY }) => {
+	on:mouseup={({ offsetX, offsetY, altKey, shiftKey }) => {
 		mouseDown = false;
 		if (!dragging) {
 			const [xCoord, yCoord] = screenToMap(offsetX, offsetY);
-			map[JSON.stringify([xCoord, yCoord])] = !map[JSON.stringify([xCoord, yCoord])];
+			const foundCell = map.get(JSON.stringify([xCoord, yCoord])) ?? Cell.Disabled;
+			map.set(
+				JSON.stringify([xCoord, yCoord]),
+				altKey ? cycleColor(foundCell, shiftKey) : flipCell(foundCell)
+			);
+			map = map;
 		}
 		dragging = false;
 	}}
 />
 
-<Canvas {width} {height}>
+<Canvas {width} {height} on:contextmenu={event => event.preventDefault()}>
 	<Layer {render} />
 </Canvas>
 
