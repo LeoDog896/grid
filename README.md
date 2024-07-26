@@ -12,6 +12,9 @@ Infinite clickable grid as a website.
 ## Things I want
 
 - [x] Colors
-- [] Select multiple items
-- [] 3d grid (not display; just time travel; go between z layers at +-1)
-- [] Palette changing
+- [ ] Select multiple items
+- [ ] 3d grid (not display; just time travel; go between z layers at +-1)
+- [ ] Palette changing
+- [ ] Command palette (select cells, change colors)
+- [ ] Cellular automata programming
+- [ ] General scripting
